@@ -12,7 +12,7 @@ public class CestaEntity {
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private ClienteEntity cliente;
-
+//hehe
     @ManyToOne
     @JoinColumn(name = "produto_id")
     private ProdutoEntity produto;
