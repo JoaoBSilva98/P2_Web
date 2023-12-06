@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CestaRepository extends JpaRepository<CestaEntity, Long> {
-   
+
 }

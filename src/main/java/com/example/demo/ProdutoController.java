@@ -8,7 +8,7 @@ import com.example.demo.Entity.ProdutoEntity;
 
 @RestController
 @RequestMapping("/api/produtos")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200") 
 public class ProdutoController {
     private final ProdutoService produtoService;
 

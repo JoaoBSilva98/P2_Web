@@ -9,8 +9,8 @@ import com.example.demo.Entity.ClienteEntity;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200") 
 @RequestMapping("/api/clientes")
-@CrossOrigin(origins = "*")
 public class ClienteController {
 
     @Autowired
@@ -23,10 +23,20 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteEntity> criarCliente(@RequestBody ClienteEntity cliente) {
-        ClienteEntity novoCliente = clienteService.criarCliente(cliente);
-        return new ResponseEntity<>(novoCliente, HttpStatus.CREATED);
+    public ResponseEntity<?> criarCliente(@RequestBody ClienteEntity cliente) {
+        try {
+            ClienteEntity novoCliente = clienteService.criarCliente(cliente);
+            if (novoCliente != null) {
+                return new ResponseEntity<>(novoCliente, HttpStatus.CREATED);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Já existe um cliente com esse email.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao criar o cliente. Detalhes: " + e.getMessage());
+        }
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<ClienteEntity> atualizarCliente(@PathVariable Long id, @RequestBody ClienteEntity cliente) {
@@ -53,6 +63,16 @@ public class ClienteController {
             return ResponseEntity.ok(clienteLogado);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @GetMapping("/por-email/{email}")
+    public ResponseEntity<ClienteEntity> buscarClientePorEmail(@PathVariable String email) {
+        ClienteEntity cliente = clienteService.buscarClientePorEmail(email);
+        if (cliente != null) {
+            return ResponseEntity.ok(cliente);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 }

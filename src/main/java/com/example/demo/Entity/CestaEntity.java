@@ -1,7 +1,6 @@
 package com.example.demo.Entity;
 
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "Cesta")
@@ -11,15 +10,19 @@ public class CestaEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "cliente_id")
     private ClienteEntity cliente;
 
     @ManyToOne
-    @JoinColumn(name = "pedido_id")
-    private PedidoEntity pedido;    
+    @JoinColumn(name = "produto_id")
+    private ProdutoEntity produto;
 
-    @OneToMany(mappedBy = "cesta", cascade = CascadeType.ALL)
-    private List<ProdutoEntity> produtos;
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
+    private PedidoEntity pedido;
+
+    private int quantidade;
+    private double valorTotal;
 
     public Long getId() {
         return id;
@@ -29,19 +32,19 @@ public class CestaEntity {
         this.id = id;
     }
 
-    public ClienteEntity getCliente() {
-        return cliente;
+    public ProdutoEntity getProduto() {
+        return produto;
     }
 
-    public void setCliente(ClienteEntity cliente) {
-        this.cliente = cliente;
+    public void setProduto(ProdutoEntity produto) {
+        this.produto = produto;
     }
 
-    public List<ProdutoEntity> getProdutos() {
-        return produtos;
+    public int getQuantidade() {
+        return quantidade;
     }
 
-    public void setProdutos(List<ProdutoEntity> produtos) {
-        this.produtos = produtos;
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
     }
 }

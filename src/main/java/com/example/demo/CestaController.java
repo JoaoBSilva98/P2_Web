@@ -9,14 +9,13 @@ import com.example.demo.Entity.CestaEntity;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cestas")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CestaController {
 
     @Autowired
     private CestaService cestaService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/api/cliente/{id}")
     public ResponseEntity<CestaEntity> buscarCestaPorId(@PathVariable Long id) {
         CestaEntity cesta = cestaService.buscarCestaPorId(id);
         return ResponseEntity.ok(cesta);

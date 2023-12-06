@@ -1,9 +1,12 @@
 package com.example.demo.Entity;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,6 +20,9 @@ public class ClienteEntity {
     private String senha;
     private String cpf;
     private String telefone;
+
+    @OneToMany(mappedBy = "cliente")
+    private List<CestaEntity> cestas;
 
     public Long getId() {
         return id;

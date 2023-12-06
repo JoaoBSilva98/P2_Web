@@ -16,4 +16,6 @@ public class PedidoEntity {
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<CestaEntity> cestas;
+
+    private double valorTotalPedido;
 }

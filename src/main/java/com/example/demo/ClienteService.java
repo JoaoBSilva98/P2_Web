@@ -15,10 +15,18 @@ public class ClienteService {
     private ClienteRepository clienteRepository;
 
     public ClienteEntity criarCliente(ClienteEntity cliente) {
-        if (clienteRepository.findByEmail(cliente.getEmail()) != null) {
+        Optional<ClienteEntity> clienteExistente = clienteRepository.findByEmailIgnoreCase(cliente.getEmail());
+    
+        if (clienteExistente.isPresent()) {
             return null;
+        } else {
+            return clienteRepository.save(cliente);
         }
-        return clienteRepository.save(cliente);
+    }
+
+    public ClienteEntity buscarClientePorEmail(String email) {
+        Optional<ClienteEntity> clienteOptional = clienteRepository.findByEmailIgnoreCase(email);
+        return clienteOptional.orElse(null);
     }
 
     public ClienteEntity buscarClientePorId(Long id) {
@@ -31,7 +39,7 @@ public class ClienteService {
         if (clienteOptional.isPresent()) {
             ClienteEntity clienteExistente = clienteOptional.get();
             if (!clienteExistente.getEmail().equals(cliente.getEmail()) &&
-                    clienteRepository.findByEmail(cliente.getEmail()) != null) {
+                    clienteRepository.findByEmailIgnoreCase(cliente.getEmail()) != null) {
                 return null;
             }
             clienteExistente.setNome(cliente.getNome());
