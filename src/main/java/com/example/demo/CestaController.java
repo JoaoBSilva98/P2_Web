@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.Entity.CestaEntity;
 
-import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -21,27 +20,29 @@ public class CestaController {
         return ResponseEntity.ok(cesta);
     }
 
-    @PostMapping
-    public ResponseEntity<CestaEntity> criarCesta(@RequestBody CestaEntity cesta) {
-        CestaEntity novaCesta = cestaService.criarCesta(cesta);
+    @PostMapping("/api/cliente/{clienteId}/adicionar-produto/{produtoId}")
+    public ResponseEntity<CestaEntity> adicionarItemNaCesta(
+            @PathVariable Long clienteId, @PathVariable Long produtoId, @RequestBody int quantidade) {
+        CestaEntity novaCesta = cestaService.adicionarItemNaCesta(clienteId, produtoId, quantidade);
         return new ResponseEntity<>(novaCesta, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CestaEntity> atualizarCesta(@PathVariable Long id, @RequestBody CestaEntity cesta) {
+    @PutMapping("/api/cesta/{id}")
+    public ResponseEntity<CestaEntity> atualizarCesta(
+            @PathVariable Long id, @RequestBody CestaEntity cesta) {
         CestaEntity cestaAtualizada = cestaService.atualizarCesta(id, cesta);
         return ResponseEntity.ok(cestaAtualizada);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarCesta(@PathVariable Long id) {
-        cestaService.deletarCesta(id);
+    @DeleteMapping("/api/remover-item/{id}")
+    public ResponseEntity<Void> removerItemDaCesta(@PathVariable Long id) {
+        cestaService.removerItemDaCesta(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<CestaEntity>> listarCestas() {
-        List<CestaEntity> cestas = cestaService.listarCestas();
-        return ResponseEntity.ok(cestas);
+    @GetMapping("/api/calcular-total")
+    public ResponseEntity<Double> calcularTotalCarrinho() {
+        double total = cestaService.calcularTotalCarrinho();
+        return ResponseEntity.ok(total);
     }
 }

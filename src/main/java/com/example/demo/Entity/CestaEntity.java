@@ -40,6 +40,10 @@ public class CestaEntity {
         this.produto = produto;
     }
 
+    public void setCliente(ClienteEntity cliente) {
+        this.cliente = cliente;
+    }
+
     public int getQuantidade() {
         return quantidade;
     }
