@@ -1,80 +1,77 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.example.demo.Entity.CestaEntity;
-import com.example.demo.Entity.ClienteEntity;
 import com.example.demo.Entity.ProdutoEntity;
 import com.example.demo.Repositories.CestaRepository;
-import com.example.demo.Repositories.ProdutoRepository;
-import com.example.demo.Repositories.ClienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CestaService {
 
     @Autowired
     private CestaRepository cestaRepository;
-    private ProdutoRepository produtoRepository;
-    private ClienteRepository clienteRepository;
+    
+    @Autowired
+    private ProdutoService produtoService;
 
-    public CestaEntity adicionarItemNaCesta(Long clienteId, Long produtoId, int quantidade) {
-        ClienteEntity cliente = clienteRepository.findById(clienteId).orElseThrow(() -> new RuntimeException("Cliente não encontrado com ID: " + clienteId));
-        ProdutoEntity produto = produtoRepository.findById(produtoId).orElseThrow(() -> new RuntimeException("Produto não encontrado com ID: " + produtoId));
+    public CestaEntity adicionarItemNoCarrinho(Long clienteId, Long produtoId, int quantidade) {
+        ProdutoEntity produto = produtoService.obterProdutoPorId(produtoId);
 
-        CestaEntity cesta = new CestaEntity();
-        cesta.setCliente(cliente);
-        cesta.setProduto(produto);
-        cesta.setQuantidade(quantidade);
+        CestaEntity itemCesta = new CestaEntity();
+        itemCesta.setClienteId(clienteId);
+        itemCesta.setProdutoId(produtoId);
+        itemCesta.setQuantidade(quantidade);
 
-        return cestaRepository.save(cesta);
+        itemCesta.setNomeProduto(produto.getNome());
+        itemCesta.setValorUnitario(produto.getPreco());
+
+        return cestaRepository.save(itemCesta);
     }
 
-    public void removerItemDaCesta(Long id) {
-        cestaRepository.deleteById(id);
+    public List<CestaEntity> buscarItensDoCarrinho(Long clienteId) {
+        return cestaRepository.findByClienteId(clienteId);
     }
 
-    public double calcularTotalCarrinho() {
-        List<CestaEntity> cestas = cestaRepository.findAll();
-        double total = 0;
-    
-        for (CestaEntity cesta : cestas) {
-            Long produtoId = cesta.getProduto().getId();
-            int quantidade = cesta.getQuantidade();
-            Double precoUnitario = produtoRepository.findPrecoById(produtoId);
-    
-            if (precoUnitario != null) {
-                total += precoUnitario * quantidade;
-            }
+    public void removerItemDoCarrinho(Long clienteId, Long produtoId) {
+        Optional<CestaEntity> optionalCesta = cestaRepository.findByClienteIdAndProdutoId(clienteId, produtoId);
+        optionalCesta.ifPresent(cestaRepository::delete);
+    }
+
+    public CestaEntity atualizarQuantidadeNoCarrinho(Long clienteId, Long produtoId, int novaQuantidade) {
+        Optional<CestaEntity> optionalCesta = cestaRepository.findByClienteIdAndProdutoId(clienteId, produtoId);
+
+        if (optionalCesta.isPresent()) {
+            CestaEntity cesta = optionalCesta.get();
+            cesta.setQuantidade(novaQuantidade);
+            atualizarValorTotal(cesta);
+            return cestaRepository.save(cesta);
         }
-    
+
+        return null;
+    }
+
+
+    public double calcularTotalCarrinho(Long clienteId) {
+        List<CestaEntity> itensCarrinho = buscarItensDoCarrinho(clienteId);
+        double total = 0.0;
+        
+        for (CestaEntity item : itensCarrinho) {
+            total += item.getValorTotal();
+        }
+        
         return total;
     }
-    
 
-    public CestaEntity buscarCestaPorId(Long id) {
-        return cestaRepository.findById(id).orElse(null);
-    }
-
-    public CestaEntity criarCesta(CestaEntity cesta) {
-        return cestaRepository.save(cesta);
-    }
-
-    public CestaEntity atualizarCesta(Long id, CestaEntity cesta) {
-        if (cestaRepository.existsById(id)) {
-            cesta.setId(id);
-            return cestaRepository.save(cesta);
+    private void atualizarValorTotal(CestaEntity cesta) {
+        if (cesta.getValorUnitario() != 0 && cesta.getQuantidade() != 0) {
+            double valorTotal = cesta.getValorUnitario() * cesta.getQuantidade();
+            cesta.setValorTotal(valorTotal);
         } else {
-            return null;
+            cesta.setValorTotal(0);
         }
-    }
-
-    public void deletarCesta(Long id) {
-        cestaRepository.deleteById(id);
-    }
-
-    public List<CestaEntity> listarCestas() {
-        return cestaRepository.findAll();
     }
 }

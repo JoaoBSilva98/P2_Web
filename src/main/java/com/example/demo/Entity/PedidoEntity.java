@@ -15,7 +15,7 @@ public class PedidoEntity {
     private ClienteEntity cliente;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-    private List<CestaEntity> cestas;
+    private List<CestaEntity> pedidoCestas;
 //hehe
     private double valorTotalPedido;
 }

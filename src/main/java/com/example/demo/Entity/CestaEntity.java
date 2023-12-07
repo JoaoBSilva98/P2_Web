@@ -9,20 +9,27 @@ public class CestaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long produtoId;
+
+    private int quantidade;
+
+    private double valorUnitario;
+
+    private double valorTotal;
+
+    private String nomeProduto;
+
+
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "cliente_id", insertable = false, updatable = false)
     private ClienteEntity cliente;
-//hehe
-    @ManyToOne
-    @JoinColumn(name = "produto_id")
-    private ProdutoEntity produto;
+    
+    @Column(name = "cliente_id")
+    private Long clienteId;
 
     @ManyToOne
     @JoinColumn(name = "pedido_id")
     private PedidoEntity pedido;
-
-    private int quantidade;
-    private double valorTotal;
 
     public Long getId() {
         return id;
@@ -32,16 +39,29 @@ public class CestaEntity {
         this.id = id;
     }
 
-    public ProdutoEntity getProduto() {
-        return produto;
+    public String getNomeProduto(){
+        return nomeProduto;
     }
 
-    public void setProduto(ProdutoEntity produto) {
-        this.produto = produto;
+    public void setNomeProduto(String nomeProduto){
+        this.nomeProduto = nomeProduto;
     }
 
-    public void setCliente(ClienteEntity cliente) {
-        this.cliente = cliente;
+    public Long getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
+
+
+    public Long getProdutoId() {
+        return produtoId;
+    }
+
+    public void setProdutoId(Long produtoId) {
+        this.produtoId = produtoId;
     }
 
     public int getQuantidade() {
@@ -50,5 +70,21 @@ public class CestaEntity {
 
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public double getValorUnitario() {
+        return valorUnitario;
+    }
+
+    public void setValorUnitario(double valorUnitario) {
+        this.valorUnitario = valorUnitario;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
     }
 }
